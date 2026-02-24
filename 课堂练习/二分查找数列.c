@@ -41,7 +41,7 @@ long binary_right(long *arr,long x,long l,long r){
     return -1;
 }
 
-void sort(long *arr,long int left,long int right){
+void sort(long *arr,long int left,long int right){//快速排序
     if(left>=right)return;
     long mid=(left+right)/2;
     long temp=arr[mid];
@@ -65,7 +65,7 @@ void fun1(long x,long *arr,long len){
     printf("%ld\n",result);
 }
 
-void fun2(long x,long y,long *arr,long len){
+void fun2(long x,long y,long *arr,long len){//2 x y：查询数列中有多少个数大于等于x并且小于等于y
     if(x>y){
         printf("0\n");return;
     }
@@ -75,7 +75,7 @@ void fun2(long x,long y,long *arr,long len){
     printf("%ld\n",result);
 }
 
-void fun3(long x,long y,long *arr,long len){
+void fun3(long x,long y,long *arr,long len){//3 x y：查询数列中有多少个数大于等于x 并且小于y
     if(x>=y){
         printf("0\n");return;
     }
@@ -85,7 +85,7 @@ void fun3(long x,long y,long *arr,long len){
     printf("%ld\n",result);
 }
 
-void fun4(long x,long y,long *arr,long len){
+void fun4(long x,long y,long *arr,long len){//4 x y：查询数列中有多少个数大于x并且小于等于y 
     if(x>=y){
         printf("0\n");return;
     }
@@ -95,7 +95,7 @@ void fun4(long x,long y,long *arr,long len){
     printf("%ld\n",result);
 }
 
-void fun5(long x,long y,long *arr,long len){
+void fun5(long x,long y,long *arr,long len){//5 x y：查询数列中有多少个数大于x并且小于y 
     if(x>=y){
         printf("0\n");return;
     }
