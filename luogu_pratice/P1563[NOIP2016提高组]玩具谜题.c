@@ -10,7 +10,7 @@ int main(){
     }
     while(m--){
         scanf("%ld%ld",&a,&s);
-        ans=(ans+(a^way[ans]?s:n-s))%n,ans=(!ans?n:ans);//第一步判断是向前还是向后走，第二步判断是否越界，越界则回到起点
+        ans=(ans+(a^way[ans]?s:n-s))%n,ans=(!ans?n:ans);//第一步判断是向前还是向后走，第二步判断是否越界，越界则回到起点。
     }
     printf("%s",name+ans*13);
     free(name);
