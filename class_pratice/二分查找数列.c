@@ -14,7 +14,7 @@
 对于每次询问输出一行一个整数表示询问的答案。
 */
 
-#include<stdio.h>
+#include<stdio.h> 
 #include<string.h>
 #include<stdlib.h>
 #include<math.h>
