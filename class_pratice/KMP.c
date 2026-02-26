@@ -10,8 +10,8 @@ int *getnext(char*s){
         int j=next[i-1];
         while(j>0&&s[i]!=s[j]){
             j=next[j-1];
-        }
-        if(s[i]==s[j]){    
+        } 
+        if(s[i]==s[j]){
             j++;
         }
         next[i]=j;

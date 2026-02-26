@@ -7,7 +7,7 @@
             "args": [
                 "/Zi",
                 "/EHsc",
-                "/nologo",
+                "/nologo", 
                 "/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "${file}"
             ],
