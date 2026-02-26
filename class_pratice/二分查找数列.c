@@ -20,7 +20,7 @@
 #include<math.h>
 
 void swap(long *a,long *b){
-    long temp=*a;
+    long temp=*a;    
     *a=*b;
     *b=temp;
 }
