@@ -9,7 +9,7 @@ int main(){
     for(int i=1;i<=m;i++){
         for(int j=1;j<=n;j++){
             scanf("%c",&c);
-            if(c=='*'){
+            if(c=='*'){ 
                 map[i][j]=-1;
                 res[i+1][j+1]++;
                 res[i+1][j]++;
