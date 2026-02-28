@@ -1,15 +1,22 @@
 #include<stdio.h>
 #include<stdlib.h>
+int **arr;
 int main(){
     int n;
     scanf("%d",&n);
-    unsigned long long *arr=(unsigned long long*)malloc(sizeof(unsigned long long)*n);
-    arr[0]=1;
-    unsigned long long sum=1;
-    for(int i=1;i<n;i++){
-        arr[i]=arr[i-1]*(i+1);
-        sum+=arr[i];
+    arr=(int**)malloc(sizeof(int*)*n);
+    for(int i=0;i<n;i++){
+        arr[i]=(int*)malloc(sizeof(int)*70);
     }
-    printf("%llu",sum);
+    memset(arr,0,sizeof(int)*n*70);
+    arr[0][0]=1;
+    for(int i=1;i<n;i++){
+        int carry=0;
+        
+    }
+    for(int i=0;i<n;i++){
+        free(arr[i]);
+    }
     free(arr);
+    return 0;
 }
