@@ -13,7 +13,7 @@ int main(){
         }
     }
     for(int i=0;i<lena+lenb;i++){
-        if(res[i]>=10){
+        if(res[i]>=10){          //
             res[i+1]+=res[i]/10;
             res[i]%=10;
         }
