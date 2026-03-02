@@ -1,14 +1,19 @@
 #include<iostream>
 using namespace std;
-int arr[101],n;
 int main(){
-    cin>>n;
-    for(int i=n;i>=0;i--){
-        cin>>arr[i];
-    }
-    for(int i=n;i>=1;i--){
-        if(arr[i])cout<<arr[i]<<"x^"<<i<<"+";
-    }
-    cout<<arr[0];
-    return 0;
+	int n; scanf("%d",&n);
+	for(int i=n;i>=0;i--){
+		int a; scanf("%d",&a);
+		if(!a)continue;//系数为0直接跳过
+		if(a>0&&i!=n)putchar('+');//第一步
+		if(a<0)putchar('-');
+		
+		if(abs(a)!=1||!i)printf("%d",abs(a));//第二步
+		
+		if(i){//第三步
+			putchar('x');
+			if(i!=1)printf("^%d",i);
+		}
+	}
+	return 0;
 }
