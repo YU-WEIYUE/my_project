@@ -8,7 +8,7 @@ typedef struct{
     int num;
 } dat;
 
-bool compare(const dat& a,const dat&b){//自定义比较规则
+bool compare(const dat& a,const dat& b){//自定义比较规则
     return a.num<b.num;
 }
 
@@ -26,7 +26,7 @@ int main(){
     q.push_back({"qww",43});
     q.push_back({"qrtw",65});
     sort(q.begin(),q.end(),compare);
-    for(auto&d:q){//c++11开始支持的循环，即遍历q，把每个元素暂时命名为d，没有&就不能修改q，这里其实有没有无所谓
+    for(auto&d:q){//c++11开始支持的vector循环，即遍历q，把每个元素暂时命名为d，没有&就不能修改q
                   //auto避免书写复杂类型名  
         cout<<d.str<<" "<<d.num<<endl;
     }

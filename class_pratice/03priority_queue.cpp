@@ -23,6 +23,8 @@ int main(){
     m.push(9430);
     m.push(-23);
     cout<<"min:"<<m.top()<<endl;
+    int d=m.size();
+    cout<<24-d;
 
 }
 //pop()不接收
