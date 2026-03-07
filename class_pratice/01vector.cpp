@@ -12,8 +12,13 @@ int main(){
     v.clear();//清空q
 
     vector<int>q={12,324,12,3,45};
-    for(int i=0;i<q.size();i++){
-        cout<<q[i]<<" ";
+    q.insert(q.begin()+1,3,4);
+    q.erase(q.begin()+1,q.begin()+2);
+    for(auto i:q){
+        cout<<i<<" ";
     }//遍历q
+    cout<<endl<<endl;
+    cout<<q.front()<<endl;//起始于元素
+    cout<<q.back()<<endl;//末尾元素
     q.clear();
 }

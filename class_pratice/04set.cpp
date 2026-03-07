@@ -18,4 +18,8 @@ int main(){
     arr.insert("ajs");
     arr.insert("ajs");
     for(const auto&x:arr)cout<<x<<endl;
+
+    
+    cout<<arr.count("ajs")<<" "<<arr.empty()<<endl;
+    cout<<arr.max_size();
 }  
