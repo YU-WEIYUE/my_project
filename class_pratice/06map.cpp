@@ -9,9 +9,6 @@ int main(){
 
     for(auto i:mp)cout<<i.first<<"  "<<i.second<<endl;
 
-  
-
-
     map<int,string>a{{1,"ds"},{23,"hiou"},{2432,"ws"}};
     auto it=a.begin();
     for(;it!=a.end();++it){
