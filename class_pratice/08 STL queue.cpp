@@ -1,6 +1,7 @@
 #include<iostream>
 #include<queue>
 using namespace std;
+//约瑟夫问题
 int main(){
     queue<int>q;
     int n,m;cin>>n>>m;
