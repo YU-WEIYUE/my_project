@@ -3,10 +3,10 @@
 #include<algorithm>
 #include<string>
 using namespace std;
-typedef struct{
+struct dat{
     string str;
     int num;
-} dat;
+};
 
 bool compare(const dat& a,const dat& b){//自定义比较规则
     return a.num<b.num;
