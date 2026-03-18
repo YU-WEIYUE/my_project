@@ -7,12 +7,12 @@
             "args": [
                 "/Zi",
                 "/EHsc",
-                "/nologo", 
+                "/nologo",
                 "/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "${file}"
             ],
             "options": {
-                "cwd": "${fileDirname}"         
+                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$msCompile"
