@@ -7,8 +7,6 @@ int find(int x){
     if(x!=s[x])s[x]=find(s[x]);
     return s[x];
 }
-
-
 int main()
 {
     int n;cin>>n;
