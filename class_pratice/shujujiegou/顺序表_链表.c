@@ -5,6 +5,7 @@
 typedef struct node{
     int data;
     struct node *next;
+    struct node *pre;
 }Node;
 
 Node *creat1(){//先进先出
@@ -112,10 +113,43 @@ Node *delete(int e,Node *head){//删除其中元素为e的节点（可能有多�
 }
 
 
+Node *combine(Node *a,Node *b){//把升序链表a，b合并成一个新的升序链表
+    Node *new_head=(Node*)malloc(leng);
+    new_head->next=NULL;
+    Node *p=new_head;
+    Node *pa=a->next,*pb=b->next;
+    while(pa!=NULL && pb!=NULL){
+        if(pa->data<pb->data){
+            p->next=pa;
+            pa=pa->next;
+        }
+        else{
+            p->next=pb;
+            pb=pb->next;
+        }
+        p=p->next;
+    }
+    if(pa!=NULL) p->next=pa;
+    if(pb!=NULL) p->next=pb;
+    return new_head;
 
+}
 
-
-
+Node* delete1(Node *head,Node* p){//删除p节点
+    if(head == NULL || p == NULL) return NULL;
+    Node *pre = head;
+    // 找p的前驱节点
+    while(pre->next != p && pre->next != NULL){
+        pre = pre->next;
+    }
+    
+    if(pre->next == NULL) return NULL; // p节点不在链表中
+    
+    pre->next = p->next; // 删除p节点
+    free(p); // 释放p节点的内存
+    
+    return head;
+}
 
 
 

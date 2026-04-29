@@ -1,16 +1,27 @@
 {
+    "version": "0.2.0",
     "configurations": [
+        
         {
-            "name": "(Windows) 启动",
-            "type": "cppvsdbg",
+            "name": "g++.exe - 生成和调试活动文件",
+            "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/a.exe",
+            "program": "${fileDirname}\\test.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${fileDirname}", // 关键：用变量动态获取当前文件所在目录
             "environment": [],
-            "console": "externalTerminal"
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\Dev-Cpp\\MinGW64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: g++.exe 生成活动文件"
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
