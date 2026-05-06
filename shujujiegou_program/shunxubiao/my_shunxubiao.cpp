@@ -43,7 +43,7 @@ typedef struct{
 
 typedef struct{  //线性表的管理表定义
      struct { char name[30];
-     		  SqList L;	
+              SqList L;	
       } 
       elem[10];
       int length;//当前集合长度
@@ -77,7 +77,7 @@ status ListDelete(SqList &L,int i,ElemType &e);  //删除元素
 status ListTraverse(SqList L); //遍历输出
 void visit(int elem);  //遍历输出时候调用的visit函数
 void MaxSubArray(SqList L);  //最大连续子数组
-void SubArrayNum(SqList L , int u); //和为k的子数组个数
+void SubArrayNum(SqList L , int k); //和为k的子数组个数
 void sortList(SqList &L);  //顺序表排序
 status AddList(LISTS &Lists,char ListName[]);//添加线性表到集合
 status RemoveList(LISTS &Lists,char ListName[]);//从集合中删除线性表
@@ -101,6 +101,7 @@ int main(){
     int currentIndex = -1; 
     
     Lists.length=0;//初始化线性表集合长度为0，表示集合中没有默认线性表
+    Lists.listsize = 10; // 初始化集合最大容量
     
     while(choice){
         show(); //显示菜单界面
@@ -124,6 +125,7 @@ int main(){
             // ========== 系统操作 ==========
             case 0:
                 //退出系统
+                GREEN;
                 printf("感谢使用线性表系统！再见！\n");
                 printf("输入任意键退出...");
                 _getch();
@@ -286,7 +288,7 @@ int main(){
                 printf("请输入要插入的元素值：");
                 YELLOW;
                 scanf("%d",&e);
-                if(e>9999||e<0){RED;printf("元素值超出范围（0-9999），插入失败！\n");break;}
+                // 移除元素值范围限制，支持负数输入
                 GREEN;
                 printf("请输入要插入的位置：");
                 YELLOW;
@@ -304,7 +306,7 @@ int main(){
                 YELLOW;
                 scanf("%d",&i);
                 if(ListDelete(Lists.elem[currentIndex].L,i,e)==OK){WHITE;printf("线性表【%s】中元素%d删除成功！\n", Lists.elem[currentIndex].name, e);}
-                else{RED;printf("元素%d删除失败！\n",e);}
+                else{RED;printf("位置%d删除失败！\n",i);}
                 break;
             }
 
@@ -319,6 +321,7 @@ int main(){
             case 16:{//顺序表排序
                 if(currentIndex == -1){RED;printf("请先使用功能键 3 选中一个线性表！\n");break;}
                 sortList(Lists.elem[currentIndex].L);
+                WHITE;printf("线性表【%s】排序完成！\n", Lists.elem[currentIndex].name);
                 break;
             }
                 
@@ -347,7 +350,11 @@ int main(){
                 printf("请输入要保存的文件名：");
                 YELLOW;
                 scanf("%s",FileName);
-                SaveList(Lists.elem[currentIndex].L,FileName);
+                if(SaveList(Lists.elem[currentIndex].L,FileName)==OK){
+                    WHITE;printf("线性表【%s】已保存到文件【%s】！\n", Lists.elem[currentIndex].name, FileName);
+                }else{
+                    RED;printf("文件保存失败！\n");
+                }
                 break;
             }
             case 20:{//附加功能
@@ -374,19 +381,23 @@ int main(){
 
                     case 1: // 1. 线性表去重
                     if(currentIndex == -1){RED;printf(" 请先在主菜单选中一个线性表！\n");break;}
-                    RemoveDuplicates(Lists.elem[currentIndex].L);
+                    if(RemoveDuplicates(Lists.elem[currentIndex].L)==OK){
+                        WHITE;printf(" 线性表【%s】去重完成！\n", Lists.elem[currentIndex].name);
+                    }else{
+                        RED;printf(" 线性表去重失败！\n");
+                    }
                     break;
 
                     case 2: // 2. 合并两个线性表
                         {if(Lists.length < 2){RED;printf(" 至少需要2个线性表才能合并！\n");break;}
-                
+                    
                         char name1[30], name2[30];
                         WHITE; printf(" 当前集合中的表：\n"); showLists(Lists);
-                
+                    
                         GREEN; printf("\n请输入第一个表名（目标表，结果会存到这里）：");
                         YELLOW; scanf("%s", name1);
                         int idx1 = LocateList(Lists, name1);
-                
+                    
                         GREEN; printf("请输入第二个表名（源表，数据会追加过去）：");
                         YELLOW; scanf("%s", name2);
                         int idx2 = LocateList(Lists, name2);
@@ -394,9 +405,12 @@ int main(){
                         if(idx1 == -1 || idx2 == -1) {
                             RED; printf(" 表名输入错误！\n");
                         } else {
-                            MergeLists(Lists.elem[idx1].L, Lists.elem[idx2].L);
-                            // 自动选中目标表
-                            currentIndex = idx1;
+                            if(MergeLists(Lists.elem[idx1].L, Lists.elem[idx2].L)==OK){
+                                WHITE;printf(" 线性表【%s】合并【%s】完成！\n", name1, name2);
+                                currentIndex = idx1;
+                            }else{
+                                RED;printf(" 线性表合并失败！\n");
+                            }
                         }
                         break;}
 
@@ -406,27 +420,32 @@ int main(){
                         resIntersect.elem = NULL; // 初始化
                         resIntersect.length = 0;
                         resIntersect.listsize = 0;
-                        IntersectLists(Lists, resIntersect);
-                        // 【可选】询问是否保存交集为新表
-                        char saveNew;
-                        GREEN; printf("\n是否将交集保存为新线性表？(y/n): ");
-                        YELLOW; scanf(" %c", &saveNew);
-                        if(saveNew == 'y' || saveNew == 'Y') {
-                            char newName[30];
-                            GREEN; printf("请输入新表名称：");
-                            YELLOW; scanf("%s", newName);
-                            if(AddList(Lists, newName) == OK) {
-                                // 深拷贝修复
-                                SqList &newL = Lists.elem[Lists.length-1].L;
-                                free(newL.elem);
-                                newL.elem = (ElemType*)malloc(resIntersect.listsize * sizeof(ElemType));
-                                newL.length = resIntersect.length;
-                                newL.listsize = resIntersect.listsize;
-                                memcpy(newL.elem, resIntersect.elem, resIntersect.length * sizeof(ElemType));
-                                WHITE; printf(" 交集已保存为新表【%s】！\n", newName);
-                                currentIndex = Lists.length - 1;
-                            }       
-                        } 
+                        if(IntersectLists(Lists, resIntersect)==OK){
+                            WHITE;printf(" 所有线性表交集计算完成！\n");
+                            ListTraverse(resIntersect);
+                            // 【可选】询问是否保存交集为新表
+                            char saveNew;
+                            GREEN; printf("\n是否将交集保存为新线性表？(y/n): ");
+                            YELLOW; scanf(" %c", &saveNew);
+                            if(saveNew == 'y' || saveNew == 'Y') {
+                                char newName[30];
+                                GREEN; printf("请输入新表名称：");
+                                YELLOW; scanf("%s", newName);
+                                if(AddList(Lists, newName) == OK) {
+                                    // 深拷贝
+                                    SqList &newL = Lists.elem[Lists.length-1].L;
+                                    free(newL.elem);
+                                    newL.elem = (ElemType*)malloc(resIntersect.listsize * sizeof(ElemType));
+                                    newL.length = resIntersect.length;
+                                    newL.listsize = resIntersect.listsize;
+                                    memcpy(newL.elem, resIntersect.elem, resIntersect.length * sizeof(ElemType));
+                                    WHITE; printf(" 交集已保存为新表【%s】！\n", newName);
+                                    currentIndex = Lists.length - 1;
+                                }       
+                            } 
+                        }else{
+                            RED;printf(" 交集计算失败！\n");
+                        }
                         // 释放临时交集内存
                         if(resIntersect.elem != NULL) {
                             free(resIntersect.elem);
@@ -436,7 +455,11 @@ int main(){
                     
                     case 4: // 4. 线性表反转
                         if(currentIndex == -1){RED;printf(" 请先在主菜单选中一个线性表！\n");break;}
-                        ReverseList(Lists.elem[currentIndex].L);
+                        if(ReverseList(Lists.elem[currentIndex].L)==OK){
+                            WHITE;printf(" 线性表【%s】反转完成！\n", Lists.elem[currentIndex].name);
+                        }else{
+                            RED;printf(" 线性表反转失败！\n");
+                        }
                         break;
 
                     default:
@@ -576,8 +599,8 @@ status InitList(SqList& L){
     if(L.elem==NULL)return OVERFLOW;//检查是否分配成功
     L.length=10;//将线性表的长度设置为10
     L.listsize=LIST_INIT_SIZE;//设置线性表的容量
-    for(int i=0;i<L.length;i++){//为新建的线性表赋随机值，方便测试
-        L.elem[i]=rand()%100;//生成0到99之间的随机整数
+    for(int i=0;i<L.length;i++){//为新建的线性表赋随机值（包含负数），方便测试
+        L.elem[i]=rand()%200 - 100;//生成-100到99之间的随机整数，支持负数
     }
     return OK;//返回操作成功的代码
 }
@@ -621,7 +644,7 @@ status GetElem(SqList L,int i,ElemType &e){
 //7.定位元素：函数名称是LocateElem(L,e,compare)；初始条件是线性表L已存在；操作结果是返回L中第一个与e满足关系compare的数据元素的位序，若这样的数据元素不存在，则返回0；如果线性表L不存在，返回INFEASIBLE。
 int LocateElem(SqList L,ElemType e){
     if(!L.elem)return INFEASIBLE;//如果线性表不存在，返回线性表不存在的错误代码
-    for(int i=0;i<L.length;i++){//遍历线性表中的元素，比较每个元素与e是否相等
+    for(int i=0;i<L.length;i++){//遍历线性表中的元素，比较每个元素与e是否相等（支持负数）
         if(L.elem[i]==e)return i+1;//如果找到与e相等的元素，返回该元素的位序，注意位序从1开始
     }
     return 0;//没有找到与e相等的元素，返回0
@@ -631,7 +654,7 @@ int LocateElem(SqList L,ElemType e){
 status PriorElem(SqList L,ElemType e,ElemType &pre){
     if(!L.elem)return INFEASIBLE;//如果线性表不存在，返回线性表不存在的错误代码
     int i;
-    for(i=0;i<L.length;i++){//遍历线性表中的元素，比较每个元素与e是否相等
+    for(i=0;i<L.length;i++){//遍历线性表中的元素，比较每个元素与e是否相等（支持负数）
         if(L.elem[i]==e)break;
     }
     if(i==L.length)return ERROR;//如果没找到元素e，返回ERROR
@@ -645,7 +668,7 @@ status NextElem(SqList L,ElemType e,ElemType &next){
     if(!L.elem)return INFEASIBLE;//如果线性表不存在，返回线性表不存在的错误代码
     int i;
     for(i=0;i<L.length;i++){
-        if(L.elem[i]==e)break;//遍历线性表中的元素，比较每个元素与e是否相等，如果找到与e相等的元素，跳出循环
+        if(L.elem[i]==e)break;//遍历线性表中的元素，比较每个元素与e是否相等（支持负数），如果找到与e相等的元素，跳出循环
     }
     if(i==L.length)return ERROR;//如果没找到元素e，返回ERROR
     if(i==L.length-1)return ERROR;//如果元素e是最后一个元素，没有后继，返回ERROR
@@ -658,17 +681,17 @@ status ListInsert(SqList &L,int i,ElemType e){
     if(!L.elem) return INFEASIBLE;//如果线性表不存在，返回线性表不存在的错误代码
     if(i > L.length + 1 || i < 1) return ERROR;//如果i不合法，返回ERROR
     if(L.length >= L.listsize) {//如果线性表长度达到容量，需要扩展线性表
-        ElemType *newbase = (ElemType *)realloc(L.elem, (L.listsize + 10) * sizeof(ElemType));//重新分配内存空间，扩展容量为原来的基础上加10
+        ElemType *newbase = (ElemType *)realloc(L.elem, (L.listsize + LISTINCREMENT) * sizeof(ElemType));//重新分配内存空间，扩展容量
         if(!newbase) return ERROR;//如果重新分配内存空间失败，返回ERROR
         L.elem = newbase;//更新线性表的元素指针
-        L.listsize += 10;//更新线性表的容量
+        L.listsize += LISTINCREMENT;//更新线性表的容量
     }
     
     int j;
     for(j = L.length; j >= i; j--) {//从线性表的末尾开始，依次将元素向后移动一个位置，直到第i个位置
         L.elem[j] = L.elem[j - 1];//将第j-1个元素移动到第j个位置
     }
-    L.elem[i - 1] = e;//在第i个位置插入新的数据元素e，注意数组下标从0开始，所以是i-1
+    L.elem[i - 1] = e;//在第i个位置插入新的数据元素e（支持负数），注意数组下标从0开始，所以是i-1
     L.length++;//线性表长度加1
     return OK;//返回操作成功的代码
 }
@@ -691,7 +714,7 @@ status ListTraverse(SqList L){
     int i;
     WHITE;
     printf("线性表中的元素为：");
-    for(i=0;i<L.length;i++){//遍历线性表中的元素，依次显示每个元素，每个元素间空一格
+    for(i=0;i<L.length;i++){//遍历线性表中的元素，依次显示每个元素（支持负数），每个元素间空一格
         if(i > 0) printf(" ");
         printf("%d",L.elem[i]);
       
@@ -700,268 +723,282 @@ status ListTraverse(SqList L){
     return OK;//返回操作成功的代码
 }
 
+// 遍历输出调用的visit函数
+void visit(int elem){
+    WHITE;
+    printf("%d ", elem);
+}
+
 //13.最大连续子数组和：初始条件是线性表L已存在且非空，请找出一个具有最大和的连续子数组（子数组最少包含一个元素），操作结果是其最大和
 void MaxSubArray(SqList L){
     if(L.elem==NULL){RED;printf("线性表不存在，无法计算最大连续子数组和！\n");return;}//如果线性表不存在，输出错误信息并返回
     if(L.length==0){RED;printf("线性表为空，无法计算最大连续子数组和！\n");return;}
-    int max=L.elem[0],current=L.elem[0];//初始化最大和为第一个元素，当前和也为第一个元素
-    for(int i=1;i<L.length;i++){//从第二个元素开始遍历线性表
-        if(current<0)current=L.elem[i];//如果当前和小于0，说明之前的子数组和对后续元素没有贡献，重新开始一个新的子数组
-        else current+=L.elem[i];//否则，将当前元素加入当前和中
-        if(current>max)max=current;//更新最大和
-    }
-    WHITE;
-    printf("最大连续子数组和为：%d\n",max);//输出最大连续子数组和
-}
-
-//14.和为k的子数组个数：初始条件是线性表L已存在且非空，请找出和为k的连续子数组的个数，操作结果是其个数
-void SubArrayNum(SqList L, int k){
-    if(L.elem==NULL){RED;printf("线性表不存在，无法计算和为k的子数组个数！\n");return;}//如果线性表不存在，输出错误信息并返回
-    if(L.length==0){RED;printf("线性表为空，无法计算和为k的子数组个数！\n");return;}
-    int count=0;//初始化计数器为0
-    for(int i=0;i<L.length;i++){//从第一个元素开始遍历线性表
-        int sum=0;//初始化子数组和为0
-        for(int j=i;j<L.length;j++){//从当前元素开始，依次向后扩展子数组
-            sum+=L.elem[j];//将当前元素加入子数组和中
-            if(sum==k)count++;//如果子数组和等于k，计数器加1
+    int max_sum = L.elem[0], current_sum = L.elem[0];//初始化最大和为第一个元素，当前和也为第一个元素
+    // 记录最大子数组的起止位置（可选）
+    int start = 0, end = 0, temp_start = 0;
+    
+    for(int i=1;i<L.length;i++){//从第二个元素开始遍历线性表（支持负数）
+        if(current_sum < 0){//如果当前和小于0，说明之前的子数组和对后续元素没有贡献，重新开始一个新的子数组
+            current_sum = L.elem[i];
+            temp_start = i;
+        }else{
+            current_sum += L.elem[i];//否则，将当前元素加入当前和中
+        }
+        
+        if(current_sum > max_sum){//更新最大和
+            max_sum = current_sum;
+            start = temp_start;
+            end = i;
         }
     }
     WHITE;
-    printf("和为%d的子数组个数为：%d\n",k,count);//输出和为k的子数组个数
+    printf("线性表最大连续子数组和为：%d\n", max_sum);
+    printf("该子数组为：");
+    for(int i=start; i<=end; i++){
+        printf("%d ", L.elem[i]);
+    }
+    printf("\n");
 }
 
-//15.顺序表排序：初始条件是线性表L已存在且非空，请对线性表L中的元素进行升序排序，操作结果是排序后的线性表L
+//14.和为k的子数组个数：初始条件是线性表L已存在且非空，操作结果是输出和为k的子数组个数（支持负数）
+void SubArrayNum(SqList L , int k){
+    if(L.elem==NULL){RED;printf("线性表不存在，无法计算和为k的子数组个数！\n");return;}
+    if(L.length==0){RED;printf("线性表为空，无法计算和为k的子数组个数！\n");return;}
+    
+    int count = 0;
+    // 暴力枚举所有子数组（简单实现，支持负数）
+    for(int i=0; i<L.length; i++){
+        int sum = 0;
+        for(int j=i; j<L.length; j++){
+            sum += L.elem[j];
+            if(sum == k){
+                count++;
+            }
+        }
+    }
+    WHITE;
+    printf("线性表中和为%d的子数组个数为：%d\n", k, count);
+}
+
+//15.顺序表排序：初始条件是线性表L已存在，操作结果是对线性表进行升序排序（支持负数）
 void sortList(SqList &L){
-    if(L.elem==NULL){RED;printf("线性表不存在，无法进行排序！\n");return;}//如果线性表不存在，输出错误信息并返回
-    if(L.length==0){RED;printf("线性表为空，无法进行排序！\n");return;}//如果线性表为空，输出错误信息并返回
-    //使用冒泡排序算法对线性表进行升序排序
+    if(L.elem==NULL){RED;printf("线性表不存在，无法排序！\n");return;}
+    if(L.length<=1){return;}//长度为0或1无需排序
+    
+    // 冒泡排序（支持负数）
     for(int i=0; i<L.length-1; i++){
-        for(int j=0; j<L.length-i-1; j++){
+        for(int j=0; j<L.length-1-i; j++){
             if(L.elem[j] > L.elem[j+1]){
-                int temp = L.elem[j];
+                // 交换元素
+                ElemType temp = L.elem[j];
                 L.elem[j] = L.elem[j+1];
                 L.elem[j+1] = temp;
             }
         }
     }
-    WHITE;
-    printf("排序后的线性表为：");//输出排序后的线性表
-    for(int i=0;i<L.length;i++){
-        if(i > 0) printf(" ");
-        printf("%d",L.elem[i]);
-    }
-    printf("\n");
 }
 
-//16.添加一个名称为ListName的线性表到集合中
-status AddList(LISTS &Lists,char ListName[])
-{
-    if (Lists.length >= 10) {//如果集合中已经有10个线性表了，无法再添加新的线性表，返回ERROR
+//16.添加线性表到集合：初始条件是集合未满，操作结果是将新线性表添加到集合中
+status AddList(LISTS &Lists,char ListName[]){
+    // 检查集合是否已满
+    if(Lists.length >= Lists.listsize){
+        RED;printf("线性表集合已满，无法添加新表！\n");
         return ERROR;
     }
-    Lists.elem[Lists.length].L.elem = NULL;//初始化新线性表的元素指针为NULL，表示新线性表不存在
-    InitList(Lists.elem[Lists.length].L);//调用InitList函数初始化新线性表
-    int i = 0;
-    while (ListName[i] != '\0') {//将ListName字符串复制到新线性表的name字段中，注意要添加字符串结束符'\0'
-        Lists.elem[Lists.length].name[i] = ListName[i];
-        i++;
+    // 检查表名是否重复
+    if(LocateList(Lists, ListName) != -1){
+        RED;printf("线性表名称【%s】已存在！\n", ListName);
+        return ERROR;
     }
-    Lists.elem[Lists.length].name[i] = '\0';
-    Lists.length++;
-    return OK;//返回操作成功的代码
+    // 初始化新线性表
+    strcpy(Lists.elem[Lists.length].name, ListName);
+    Lists.elem[Lists.length].L.elem = NULL;
+    if(InitList(Lists.elem[Lists.length].L) != OK){
+        return ERROR;
+    }
+    Lists.length++;//集合长度加1
+    return OK;
 }
 
-//17. Lists中删除一个名称为ListName的线性表
-status RemoveList(LISTS &Lists,char ListName[])
-{
-    int i;
-    for(i=0;i<Lists.length;i++)if(!strcmp(ListName,Lists.elem[i].name))break;//在集合中查找名称为ListName的线性表，如果找到，跳出循环
-    if(i>=Lists.length)return ERROR;//如果未找到名称为ListName的线性表，返回ERROR
-    DestroyList(Lists.elem[i].L);//销毁要删除的线性表
-    for(int j=i;j<Lists.length;j++){
-        strcpy(Lists.elem[j].name,Lists.elem[j+1].name);//将后面的线性表依次前移一个位置，覆盖掉要删除的线性表
-        Lists.elem[j].L = Lists.elem[j+1].L;//将后面的线性表的内容也前移一个位置
+//17.从集合中删除线性表：初始条件是线性表存在于集合中，操作结果是删除该线性表
+status RemoveList(LISTS &Lists,char ListName[]){
+    int index = LocateList(Lists, ListName);
+    if(index == -1){
+        return ERROR;//表不存在
     }
-    Lists.length--;//集合中线性表的数量减1
-    
-    return OK;//返回操作成功的代码
+    // 销毁线性表
+    DestroyList(Lists.elem[index].L);
+    // 移动后续元素
+    for(int i=index; i<Lists.length-1; i++){
+        Lists.elem[i] = Lists.elem[i+1];
+    }
+    Lists.length--;//集合长度减1
+    return OK;
 }
 
-//18.在集合中查找一个名称为ListName的线性表，返回其下标
+//18.在集合中查找线性表：初始条件是集合已初始化，操作结果是返回线性表下标，不存在返回-1
 int LocateList(LISTS &Lists,char ListName[]){
-    for(int i=0;i<Lists.length;i++){//在集合中查找名称为ListName的线性表
-        if(!strcmp(ListName,Lists.elem[i].name)){
-            return i;//返回下标
+    for(int i=0; i<Lists.length; i++){
+        if(strcmp(Lists.elem[i].name, ListName) == 0){
+            return i;//找到，返回下标
         }
     }
-    return -1;//如果未找到，返回-1
+    return -1;//未找到
 }
 
-//19.查看当前线性表集合中有哪些线性表
+//19.显示集合中的线性表：初始条件是集合已初始化，操作结果是输出所有线性表名称
 void showLists(LISTS Lists){
-    if(Lists.length==0){RED;printf("当前线性表集合中没有任何线性表！\n");return;}//如果集合中没有任何线性表，输出提示信息并返回
     WHITE;
-    printf("当前线性表集合中的线性表有：\n");//输出集合中有哪些线性表
-    for(int i=0;i<Lists.length;i++){
-        printf("%d. %s\n",i+1,Lists.elem[i].name);//依次输出每个线性表的名称
+    if(Lists.length == 0){
+        printf("当前线性表集合为空！\n");
+        return;
     }
-    return;
+    printf("当前线性表集合包含以下表：\n");
+    for(int i=0; i<Lists.length; i++){
+        printf("  %d. %s\n", i+1, Lists.elem[i].name);
+    }
 }
 
-//20.如果线性表L存在，将线性表L的的元素写到FileName文件中，返回OK，否则返回INFEASIBLE。
-status  SaveList(SqList L,char FileName[])
-{
-    // 请在这里补充代码，完成本关任务
-    /********** Begin *********/
-    if(L.elem==NULL)return INFEASIBLE;//如果线性表不存在，返回线性表不存在的错误代码
-    FILE *fp=fopen(FileName,"w");
-    if(!fp)return ERROR;//如果文件打开失败，返回ERROR
-    for(int i=0;i<L.length;i++){
-        fprintf(fp,"%d ",L.elem[i]);//将线性表中的元素写入文件，每个元素后面跟一个空格
+//20.将线性表保存到文件：初始条件是线性表存在，操作结果是将元素保存到文件（支持负数）
+status SaveList(SqList L,char FileName[]){
+    if(L.elem==NULL)return INFEASIBLE;
+    FILE *fp = fopen(FileName, "w");
+    if(fp == NULL)return ERROR;
+    // 写入元素个数
+    fprintf(fp, "%d\n", L.length);
+    // 写入每个元素（支持负数）
+    for(int i=0; i<L.length; i++){
+        fprintf(fp, "%d ", L.elem[i]);
     }
     fclose(fp);
-    return OK;//返回操作成功的代码
-    /********** End **********/
+    return OK;
 }
 
-//21.线性表去重：初始条件是线性表L已存在且非空，请将线性表L中的重复元素删除，操作结果是去重后的线性表L
+//21.线性表去重：初始条件是线性表存在，操作结果是删除重复元素（支持负数）
 status RemoveDuplicates(SqList &L){
-    if(L.elem==NULL){RED;printf("线性表不存在，无法进行去重！\n");return INFEASIBLE;}//如果线性表不存在，输出错误信息并返回
-    if(L.length==0){RED;printf("线性表为空，无法进行去重！\n");return INFEASIBLE;}//如果线性表为空，输出错误信息并返回
-    int *hashTable = (int *)calloc(10000, sizeof(int));//创建一个哈希表，假设元素值在0到9999之间，初始化为0
-    int newLength = 0;//新线性表的长度
-    for (int i = 0; i < L.length; i++) {
-        int val = L.elem[i];
-        if (hashTable[val] == 0) {      // 没出现过
-            hashTable[val] = 1;        // 标记为已出现
-            L.elem[newLength++] = val;    // 保留到新位置
-        }
-    }
-
-    L.length = newLength; // 更新长度
-    free(hashTable); // 修复内存泄漏
-    WHITE;
-    printf("去重后的线性表为：\n");//输出去重后的线性表
-    ListTraverse(L);//调用遍历函数输出线性表中的元素
-    return OK;
-}
-
-//22.线性表反转：初始条件是线性表L已存在且非空，请将线性表L中的元素顺序反转，操作结果是反转后的线性表L
-status ReverseList(SqList &L){
-    if(L.elem==NULL){RED;printf("线性表不存在，无法进行反转！\n");return INFEASIBLE;}//如果线性表不存在，输出错误信息并返回
-    if(L.length==0){RED;printf("线性表为空，无法进行反转！\n");return INFEASIBLE;}//如果线性表为空，输出错误信息并返回
-    for(int i=0;i<L.length/2;i++){//只需要遍历到线性表长度的一半即可完成反转
-        int temp=L.elem[i];//交换第i个元素和第length-1-i个元素的位置
-        L.elem[i]=L.elem[L.length-1-i];
-        L.elem[L.length-1-i]=temp;
-    }
-    WHITE;
-    printf("反转后的线性表为：\n");//输出反转后的线性表
-    ListTraverse(L);//调用遍历函数输出线性表中的元素
-    return OK;
-}
-
-//23.两个线性表合并:初始条件是线性表L1和L2都已存在，请将线性表L2中的元素追加到线性表L1的末尾，操作结果是合并后的线性表L1
-status MergeLists(SqList &L1, SqList L2){
-    if(L1.elem==NULL || L2.elem==NULL){RED;printf("其中一个线性表不存在，无法进行合并！\n");return INFEASIBLE;}//如果其中一个线性表不存在，输出错误信息并返回
-    // 移除空表限制，允许空表合并
-    for(int i=0;i<L2.length;i++){//将线性表L2中的元素依次追加到线性表L1的末尾
-        ListInsert(L1, L1.length + 1, L2.elem[i]);//调用插入函数，在L1的末尾位置插入L2的元素
-    }
-    WHITE;
-    printf("合并后的线性表为：\n");//输出合并后的线性表
-    ListTraverse(L1);//调用遍历函数输出线性表中的元素
-    return OK;
-}
-
-//24.当前所有线性表交集：初始条件是线性表集合Lists中至少有两个线性表且都非空，找出集合中所有线性表的公共元素，操作结果是一个新的线性表，包含集合中所有线性表的公共元素
-status IntersectLists(LISTS Lists, SqList &Intersect){
-    if(Lists.length<2){RED;printf("线性表集合中没有足够的线性表进行交集运算！\n");return INFEASIBLE;}//如果集合中没有至少两个线性表，输出错误信息并返回
-    for(int i=0;i<Lists.length;i++){
-        if(Lists.elem[i].L.elem==NULL){RED;printf("线性表【%s】不存在，无法进行交集运算！\n", Lists.elem[i].name);return INFEASIBLE;}//如果集合中有任何一个线性表不存在，输出错误信息并返回
-        if(Lists.elem[i].L.length==0){RED;printf("线性表【%s】为空，无法进行交集运算！\n", Lists.elem[i].name);return INFEASIBLE;}//如果集合中有任何一个线性表为空，输出错误信息并返回
-    }
-    InitList(Intersect);//初始化交集线性表
-    ClearList(Intersect); // 清空随机数
+    if(L.elem==NULL)return INFEASIBLE;
+    if(L.length<=1)return OK;//无重复可能
     
-    int hashTable[10000] = {0};
-    int totalTables = Lists.length;
-
-    // 修复单表重复元素导致的计数错误
-    // 第一步：处理第一张表
-    int tempHash1[10000] = {0};
-    for(int j=0; j<Lists.elem[0].L.length; j++) {
-        int val = Lists.elem[0].L.elem[j];
-        tempHash1[val] = 1;
-    }
-    for(int v=0; v<10000; v++) {
-        if(tempHash1[v]) hashTable[v] = 1;
-    }
-
-    // 第二步：处理剩余表
-    for(int i=1; i<Lists.length; i++) {
-        int currTempHash[10000] = {0};
-        for(int j=0; j<Lists.elem[i].L.length; j++) {
-            int val = Lists.elem[i].L.elem[j];
-            if(hashTable[val] == i) {
-                currTempHash[val] = 1;
+    // 去重逻辑（支持负数）
+    int new_len = 1;//至少保留第一个元素
+    for(int i=1; i<L.length; i++){
+        int is_dup = 0;
+        // 检查当前元素是否与已保留元素重复
+        for(int j=0; j<new_len; j++){
+            if(L.elem[i] == L.elem[j]){
+                is_dup = 1;
+                break;
             }
         }
-        for(int v=0; v<10000; v++) {
-            if(currTempHash[v]) hashTable[v]++;
+        if(!is_dup){
+            L.elem[new_len] = L.elem[i];
+            new_len++;
         }
     }
-
-    // 第三步：收集结果
-    for(int i=0;i<10000;i++){//遍历哈希表
-        if(hashTable[i]==totalTables){//如果某个元素在所有线性表中都出现过，将其插入到交集线性表中
-            ListInsert(Intersect, Intersect.length + 1, i);
-        }
-    }
-    WHITE;
-    printf("当前所有线性表的交集为：\n");//输出交集结果
-    ListTraverse(Intersect);//调用遍历函数输出交集线性表中的元素
+    L.length = new_len;//更新长度
     return OK;
 }
 
-//25.从文件读取线性表：如果文件FileName存在且格式正确，从文件中读取线性表的数据，存储到newList中，返回OK；如果文件不存在或格式不正确，返回ERROR。
-status ReadListFromFile(SqList &newList, char FileName[]) {
-    FILE *fp = fopen(FileName, "r");
-    if (!fp) return ERROR;
-
-    // 销毁可能存在的旧表，防止内存混乱
-    if (newList.elem != NULL) {
-        free(newList.elem);
-        newList.elem = NULL;
-        newList.length = 0;
-        newList.listsize = 0;
+//22.线性表反转：初始条件是线性表存在，操作结果是反转元素顺序（支持负数）
+status ReverseList(SqList &L){
+    if(L.elem==NULL)return INFEASIBLE;
+    if(L.length<=1)return OK;//无需反转
+    
+    int left = 0, right = L.length-1;
+    while(left < right){
+        // 交换左右元素
+        ElemType temp = L.elem[left];
+        L.elem[left] = L.elem[right];
+        L.elem[right] = temp;
+        left++;
+        right--;
     }
+    return OK;
+}
 
-    // 手动初始化空表（不调用InitList，避免随机数）
-    newList.elem = (ElemType*)malloc(LIST_INIT_SIZE * sizeof(ElemType));
-    if (!newList.elem) {
+//23.合并两个线性表：初始条件是两个线性表存在，操作结果是将L2元素追加到L1末尾（支持负数）
+status MergeLists(SqList &L1, SqList L2){
+    if(L1.elem==NULL || L2.elem==NULL)return INFEASIBLE;
+    if(L2.length == 0)return OK;//L2为空无需合并
+    
+    // 扩展L1容量（如果需要）
+    int need_size = L1.length + L2.length;
+    if(need_size > L1.listsize){
+        ElemType *newbase = (ElemType *)realloc(L1.elem, need_size * sizeof(ElemType));
+        if(newbase == NULL)return ERROR;
+        L1.elem = newbase;
+        L1.listsize = need_size;
+    }
+    // 复制L2元素到L1末尾
+    memcpy(L1.elem + L1.length, L2.elem, L2.length * sizeof(ElemType));
+    L1.length += L2.length;
+    return OK;
+}
+
+//24.求所有线性表交集：初始条件是集合中有至少2个线性表，操作结果是返回所有表的交集（支持负数）
+status IntersectLists(LISTS Lists, SqList &Intersect){
+    // 初始化交集表
+    if(InitList(Intersect) != OK)return ERROR;
+    ClearList(Intersect);//清空初始的随机值
+    
+    // 取第一个表作为基准
+    SqList base = Lists.elem[0].L;
+    if(base.length == 0)return OK;//基准表为空，交集为空
+    
+    // 遍历基准表的每个元素（支持负数）
+    for(int i=0; i<base.length; i++){
+        ElemType elem = base.elem[i];
+        // 检查该元素是否存在于所有其他表中
+        int exist_in_all = 1;
+        for(int j=1; j<Lists.length; j++){
+            if(LocateElem(Lists.elem[j].L, elem) == 0){
+                exist_in_all = 0;
+                break;
+            }
+        }
+        // 如果存在于所有表中，且未加入交集，则添加
+        if(exist_in_all && LocateElem(Intersect, elem) == 0){
+            ListInsert(Intersect, Intersect.length+1, elem);
+        }
+    }
+    return OK;
+}
+
+//25.从文件读取线性表：初始条件是文件存在且格式正确，操作结果是创建线性表（支持负数）
+status ReadListFromFile(SqList &L, char FileName[]){
+    FILE *fp = fopen(FileName, "r");
+    if(fp == NULL)return ERROR;
+    
+    // 读取元素个数
+    int len;
+    if(fscanf(fp, "%d", &len) != 1) {
+        fclose(fp);
+        return ERROR;
+    }
+    if(len <= 0) {
+        fclose(fp);
+        return ERROR;
+    }
+    
+    // 初始化线性表
+    if(L.elem != NULL)free(L.elem);
+    L.elem = (ElemType *)malloc(len * sizeof(ElemType));
+    if(L.elem == NULL) {
         fclose(fp);
         return OVERFLOW;
     }
-    newList.length = 0;
-    newList.listsize = LIST_INIT_SIZE;
-
-    // 读取数据
-    int value;
-    while (fscanf(fp, "%d", &value) == 1) {
-        // 自动扩容
-        if (newList.length >= newList.listsize) {
-            ElemType *newbase = (ElemType*)realloc(newList.elem, (newList.listsize + LISTINCREMENT) * sizeof(ElemType));
-            if (!newbase) {
-                fclose(fp);
-                return ERROR;
-            }
-            newList.elem = newbase;
-            newList.listsize += LISTINCREMENT;
+    L.listsize = len;
+    L.length = len;
+    
+    // 读取元素（支持负数）
+    for(int i=0; i<len; i++){
+        if(fscanf(fp, "%d", &L.elem[i]) != 1) {
+            free(L.elem);
+            L.elem = NULL;
+            fclose(fp);
+            return ERROR;
         }
-        newList.elem[newList.length++] = value;
     }
-
     fclose(fp);
     return OK;
 }
