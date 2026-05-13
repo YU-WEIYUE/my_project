@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) 启动调试",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,        // 核心：启用独立外部终端窗口
+            "console": "externalTerminal",  // VS Code新版本必须加这个
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\Dev-Cpp\\MinGW64\\bin\\gdb.exe", // 和你的MinGW路径一致
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: g++.exe 生成活动文件" // 必须和tasks.json的label完全一致
+        }
+    ]
+}

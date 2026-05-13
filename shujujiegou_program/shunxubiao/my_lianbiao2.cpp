@@ -74,6 +74,13 @@ status SortList(LinkList &L);//链表排序
 void SaveList(LinkList L,char name[]);//把链表保存到文件中
 status ReadListFromFile(LinkList &L, char name[]); //从文件中读取数据创建链表
 
+// ↓↓↓ 你要的新增5个函数 ↓↓↓
+status CreateRandomList10(LinkList &L);         // 1.生成10个随机数
+status RemoveDuplicate(LinkList &L);            // 2.链表去重
+int MaxSubArray(LinkList L);                    // 3.最大连续子串和
+status IntersectionAllLists(LISTS &Lists);      // 4.求所有表交集
+status MergeTwoListSort(LinkList L1, LinkList L2, LinkList &L3); // 5.合并两个链表并排序
+
 
 //主函数
 
@@ -81,6 +88,7 @@ int main(){
     int choice=1;//初始化用户选择
     int currentIndex = -1; //初始化链表指针，-1表示目前没有选中的链表
     Lists.length=0;//初始化链表集合
+    srand((unsigned)time(NULL)); //随机数种子
 
     while(choice){
         show();//展示菜单界面
@@ -99,7 +107,6 @@ int main(){
         scanf("%d",&choice);//获取用户选择
         switch(choice){
             case 0:{
-                //退出系统
                 GREEN;
                 printf("感谢使用链表系统！再见！\n");
                 printf("输入任意键退出...");
@@ -108,7 +115,6 @@ int main(){
             }
 
             case 1:{ //查看当前线性表集合中有哪些线性表
-               
                 showLists();
                 break;
             }
@@ -123,7 +129,6 @@ int main(){
                     WHITE;
                     printf("线性表【%s】创建成功！\n",ListName);
                     currentIndex=Lists.length-1;// 自动选中新表
-                    
                 }
                 else {
                     RED;
@@ -133,16 +138,12 @@ int main(){
             }
 
             case 3:{//查找并选中链表
-                
                 char Listname[30];
                 GREEN;
                 printf("请输入要查找的线性表名称：");
                 YELLOW;
                 scanf("%s",Listname);
-
-                //查找下标
                 currentIndex=LocateList(Lists,Listname);
-
                 if(currentIndex==-1){
                     RED;
                     printf("线性表【%s】查找失败！\n",Listname);
@@ -152,38 +153,31 @@ int main(){
                     WHITE;
                     printf("线性表【%s】查找成功！现在可以对其进行操作了！\n", Lists.elem[currentIndex].name);
                 }
-
                 break;
             }
 
             case 4:{//删除某一个特定链表
-                
                 char ListName[30];
                 GREEN;
                 printf("请输入要删除的线性表名称：");
                 YELLOW;
                 scanf("%s",ListName);
-
-                // 先找到要删除的表的下标
                 int delIndex = LocateList(Lists, ListName);
-
                 if(DeleteList(Lists,ListName)==OK){
                     WHITE;
                     printf("线性表【%s】删除成功！\n",ListName);
-                
                 }
                 else {
                     RED;
                     printf("线性表【%s】删除失败！\n",ListName);
                     break;
                 }
-                if(delIndex==currentIndex)currentIndex=-1;// 如果删的是当前选中的表
-                else if(delIndex<currentIndex)currentIndex--;// 如果删的是当前选中表前面的表，下标要减1
+                if(delIndex==currentIndex)currentIndex=-1;
+                else if(delIndex<currentIndex)currentIndex--;
                 break;
             }
 
             case 5:{//删除当前链表
-
                 if(currentIndex==-1){
                     RED;
                     printf("请先使用功能键 3 选中一个线性表！\n");
@@ -191,7 +185,7 @@ int main(){
                 }
                 if(DestroyList(Lists.elem[currentIndex].L)==OK){
                     WHITE;printf("线性表【%s】销毁成功！\n", Lists.elem[currentIndex].name);
-                    currentIndex=-1;//销毁后置为未选中
+                    currentIndex=-1;
                 }
                 else{
                     RED;
@@ -210,14 +204,11 @@ int main(){
                     WHITE;
                     printf("线性表【%s】清空成功！\n", Lists.elem[currentIndex].name);
                 }
-
                 else{
                     RED;
                     printf("线性表不存在，无法清空！\n");
                 }
-
                 break; 
-
             }
 
             case 7:{// 判断当前链表是否为空
@@ -238,8 +229,6 @@ int main(){
                     printf("线性表【%s】长度为：%d\n", Lists.elem[currentIndex].name,res);
                     break;
                 }
-                
-                
             }
 
             case 9:{// 获取指定位置的元素
@@ -304,7 +293,6 @@ int main(){
                 printf("请输入要插入的元素值：");
                 YELLOW;
                 scanf("%d",&e);
-                // 移除元素值范围限制，支持负数输入
                 GREEN;
                 printf("请输入要插入的位置：");
                 YELLOW;
@@ -344,7 +332,7 @@ int main(){
                     RED;
                     printf("链表不存在!");
                 }
-
+                break;
             }
 
             case 17:{//删除链表的倒数第n个结点
@@ -402,21 +390,85 @@ int main(){
                     WHITE;
                     printf("文件【%s】读取成功，数据已加载到链表【%s】中！\n", filename, Lists.elem[currentIndex].name);
                 }
+                break;
+            }
+            case 21:{
+                if(currentIndex == -1){
+                    RED;
+                    printf("请先选中一个链表！\n");
+                    break;
+                }
+                system("cls");
+                BLUE;
+                printf("==================== 附加功能 ====================\n");
+                GREEN;
+                printf("1. 生成10个随机数字链表\n");
+                printf("2. 链表去重\n");
+                printf("3. 求链表最大连续子串和\n");
+                printf("4. 求当前所有链表的交集\n");
+                printf("5. 合并两个链表并排序\n");
+                printf("0. 返回主菜单\n");
+                printf("==================================================\n");
+                YELLOW;
+                int op;
+                printf("请选择：");
+                scanf("%d",&op);
 
+                if(op == 1){
+                    CreateRandomList10(Lists.elem[currentIndex].L);
+                    WHITE;
+                    printf("生成10个随机数成功！\n");
+                }
+                else if(op == 2){
+                    RemoveDuplicate(Lists.elem[currentIndex].L);
+                    WHITE;
+                    printf("去重完成！\n");
+                }
+                else if(op == 3){
+                    int max = MaxSubArray(Lists.elem[currentIndex].L);
+                    WHITE;
+                    printf("最大连续子串和 = %d\n",max);
+                }
+                else if(op == 4){
+                    IntersectionAllLists(Lists);
+                }
+                else if(op == 5){
+                    char name2[30];
+                    GREEN;
+                    printf("请输入另一个链表名：");
+                    YELLOW;
+                    scanf("%s",name2);
+                    int idx2 = LocateList(Lists,name2);
+                    if(idx2 == -1){
+                        RED;
+                        printf("不存在！\n");
+                        break;
+                    }
+                    char newName[30];
+                    GREEN;
+                    printf("请输入新链表名：");
+                    YELLOW;
+                    scanf("%s",newName);
+                    InitList(Lists,newName);
+                    MergeTwoListSort(Lists.elem[currentIndex].L, Lists.elem[idx2].L, Lists.elem[Lists.length-1].L);
+                    WHITE;
+                    printf("合并+排序完成！新表：%s\n",newName);
+                }
                 break;
             }
 
-            
-
-
-
+            default:{
+                RED;
+                printf("输入无效！\n");
+                break;
+            }
 
         }
 
         BLUE;
         printf("按任意键以继续操作......");
-        _getch(); //暂停程序，等待用户按键
-        system("cls"); //清屏
+        _getch();
+        system("cls");
 
     }
     system("pause>nul"); 
@@ -433,7 +485,6 @@ void show(){//展示菜单
     printf("                                        欢迎使用链表管理系统                                              \n");
     printf("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-    // 分区1：多链表集合管理
     BLUE;
     printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━  多链表集合管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     GREEN;
@@ -442,7 +493,6 @@ void show(){//展示菜单
     printf("3. 查找并选中链表\n");
     printf("4. 删除某一个链表\n");
 
-    // 分区2：单链表基础操作
     BLUE;
     printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 单链表基础操作 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     GREEN;
@@ -451,7 +501,6 @@ void show(){//展示菜单
     printf("7. 判断当前链表是否为空\n");
     printf("8. 获取当前链表长度\n");
 
-    // 分区3：单链表元素操作
     BLUE;
     printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 单链表元素操作 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     GREEN;
@@ -463,7 +512,6 @@ void show(){//展示菜单
     printf("14. 删除元素\n");
     printf("15. 遍历输出链表\n");
 
-    // 分区4：单链表高级功能
     BLUE;
     printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 单链表高级功能 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     GREEN;
@@ -471,7 +519,6 @@ void show(){//展示菜单
     printf("17. 删除链表的倒数第n个结点\n");
     printf("18.链表排序 \n");
 
-    // 分区5：系统操作
     BLUE;
     printf("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━      系统操作     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     GREEN;
@@ -482,7 +529,7 @@ void show(){//展示菜单
 }
 
 
-void showLists(){//1.显示链表集合
+void showLists(){
     BLUE;
     printf("当前链表集合列表：\n");
     if(Lists.length==0){RED;printf("链表集合中没有任何链表！\n");return;}
@@ -492,227 +539,225 @@ void showLists(){//1.显示链表集合
     }
 }
 
-status InitList(LISTS &Lists,char ListName[])  //2.在Lists中增加一个名称为ListName的空链表
+status InitList(LISTS &Lists,char ListName[]) 
 {
     for(int i=0;i<Lists.length;i++){
-        if(strcmp(Lists.elem[i].name,ListName)==0){  //如果集合中已经存在同名的链表
+        if(strcmp(Lists.elem[i].name,ListName)==0){  
             RED;
             printf("集合中已经存在名称为【%s】的链表了，无法创建同名的链表\n", ListName);
-            return ERROR;  //返回错误
+            return ERROR; 
         }
     }
-    // 如果集合中不存在同名的链表，则创建新的链表
-    if(Lists.length < 30){  // 假设最多可以有30个链表
+    if(Lists.length < 30){  
         strcpy(Lists.elem[Lists.length].name, ListName);
-        Lists.elem[Lists.length].L = (LinkList)malloc(sizeof(LNode));  // 初始化链表指针
+        Lists.elem[Lists.length].L = (LinkList)malloc(sizeof(LNode)); 
         if(Lists.elem[Lists.length].L == NULL) exit(OVERFLOW);
-        Lists.elem[Lists.length].L->next = NULL;  // 头结点next置空
-        Lists.length++;  // 增加链表数目
-        return OK;  // 返回成功
+        Lists.elem[Lists.length].L->next = NULL; 
+        Lists.length++; 
+        return OK;
     }
     RED;
     printf("链表集合已满，无法添加新表！\n");
-    return OVERFLOW;  // 返回错误
+    return OVERFLOW;
 }
 
-status LocateList(LISTS Lists,char ListName[]) //3.在Lists中查找一个名称为ListName的链表的位置
+status LocateList(LISTS Lists,char ListName[]) 
 {
     for(int k=0;k<Lists.length;k++){
-        if(strcmp(Lists.elem[k].name,ListName)==0){  // 如果集合中存在名称为ListName的链表
-            return k;  // 返回序号
+        if(strcmp(Lists.elem[k].name,ListName)==0){  
+            return k; 
         }
     }
-    return -1;  // 未找到，返回-1
+    return -1; 
 }
 
-status DeleteList(LISTS &Lists,char ListName[]) //4.在Lists中删除一个名称为ListName的链表
+status DeleteList(LISTS &Lists,char ListName[]) 
 {
     for(int i=0;i<Lists.length;i++){
-        if(strcmp(Lists.elem[i].name,ListName)==0){  // 如果集合中存在名称为ListName的链表
-            DestroyList(Lists.elem[i].L);// 将该链表从集合中删除
+        if(strcmp(Lists.elem[i].name,ListName)==0){
+            DestroyList(Lists.elem[i].L);
             for(int j=i;j<Lists.length-1;j++){
                 Lists.elem[j] = Lists.elem[j+1];
             }
-            Lists.length--;  // 减少链表数目
-            return OK;  // 返回成功
+            Lists.length--;
+            return OK;
         }
     }
     RED;
     printf("未找到名称为【%s】的链表！\n", ListName);
-    return ERROR;  // 返回错误
+    return ERROR;
 }
 
-status DestroyList(LinkList& L) //5.销毁链表L
+status DestroyList(LinkList& L) 
 {
-    if(L == NULL) return INFEASIBLE; // 如果链表不存在，返回错误
-    LinkList p = L; // 从头结点开始
+    if(L == NULL) return INFEASIBLE;
+    LinkList p = L;
     while(p != NULL){
         LinkList temp = p;
-        p = p->next; // 移动到下一个结点
-        free(temp); // 释放当前结点的内存
+        p = p->next;
+        free(temp);
     }
-    L = NULL; // 将链表指针置空，表示链表已销毁
-    return OK; // 返回成功
+    L = NULL;
+    return OK;
 }
 
-status ClearList(LinkList& L)//6.清空链表L
+status ClearList(LinkList& L)
 {
-    if(L == NULL) return INFEASIBLE; // 如果链表不存在，返回错误
-    LinkList p = L->next; // 从第一个结点开始
+    if(L == NULL) return INFEASIBLE;
+    LinkList p = L->next;
     while(p != NULL){
         LinkList temp = p;
-        p = p->next; // 移动到下一个结点
-        free(temp); // 释放当前结点的内存
+        p = p->next;
+        free(temp);
     }
-    L->next = NULL; // 将头结点的next指针置空，表示链表已清空
-    return OK; // 返回成功
+    L->next = NULL;
+    return OK;
 }
 
-status ListEmpty(LinkList &L)//7.判断链表L是否为空
+status ListEmpty(LinkList &L)
 {
-    if(L == NULL) return INFEASIBLE; // 如果链表不存在，返回错误
-    if(L->next == NULL) return TRUE; // 如果链表没有结点，返回TRUE
-    return FALSE; // 否则返回FALSE
+    if(L == NULL) return INFEASIBLE;
+    if(L->next == NULL) return TRUE;
+    return FALSE;
 }
 
-status ListLength(LinkList L)//8.求链表的长度
+status ListLength(LinkList L)
 {
-    if(L==NULL)return INFEASIBLE; // 如果链表不存在，返回错误
+    if(L==NULL)return INFEASIBLE;
     int length = 0;
-    LinkList p = L->next; // 从第一个结点开始
+    LinkList p = L->next;
     while(p != NULL){
         length++;
-        p = p->next; // 移动到下一个结点
+        p = p->next;
     }
-    return length; // 返回链表长度
+    return length;
 }
 
-status GetElem(LinkList L,int i,ElemType &e)//9.获取链表L中第i个元素的值
+status GetElem(LinkList L,int i,ElemType &e)
 {
-    if(L==NULL)return INFEASIBLE; // 如果链表不存在，返回错误
-    if(i<1 || i>ListLength(L))return ERROR; // 如果位置不合法，返回错误
-    LinkList p = L->next; // 从第一个结点开始
+    if(L==NULL)return INFEASIBLE;
+    if(i<1 || i>ListLength(L))return ERROR;
+    LinkList p = L->next;
     for(int j=1;j<i;j++){
-        p = p->next; // 移动到第i个结点
+        p = p->next;
     }
-    e = p->data; // 获取第i个结点的元素值
-    return OK; // 返回成功
+    e = p->data;
+    return OK;
 }
 
-status LocateElem(LinkList &L,ElemType e)//10.定位元素e在链表L中的位置
+status LocateElem(LinkList &L,ElemType e)
 {
-    if(L==NULL)return INFEASIBLE; // 如果链表不存在，返回错误
-    LinkList p = L->next; // 从第一个结点开始
-    int position = 1; // 位序从1开始
+    if(L==NULL)return INFEASIBLE;
+    LinkList p = L->next;
+    int position = 1;
     while(p != NULL){
-        if(p->data == e) return position; // 如果找到元素e，返回位序
-        p = p->next; // 移动到下一个结点
+        if(p->data == e) return position;
+        p = p->next;
         position++;
     }
-    return ERROR; // 没有找到元素e，报错
+    return ERROR;
 }
 
-status PriorElem(LinkList L,ElemType e,ElemType &pre)//11.获取元素e的前驱
+status PriorElem(LinkList L,ElemType e,ElemType &pre)
 {
-    if(L==NULL)return INFEASIBLE; // 如果链表不存在，返回错误
-    LinkList p = L->next; // 从第一个结点开始
-    LinkList preNode = L; // 前驱结点初始为头结点
+    if(L==NULL)return INFEASIBLE;
+    LinkList p = L->next;
+    LinkList preNode = L;
     while(p != NULL){
         if(p->data == e){
-            if(preNode == L) return ERROR; // 如果e是第一个结点，没有前驱，返回错误
-            pre = preNode->data; // 获取前驱元素值
-            return OK; // 返回成功
+            if(preNode == L) return ERROR;
+            pre = preNode->data;
+            return OK;
         }
-        preNode = p; // 更新前驱结点
-        p = p->next; // 移动到下一个结点
+        preNode = p;
+        p = p->next;
     }
-    return ERROR; // 没有找到元素e，报错
+    return ERROR;
 }
 
-status NextElem(LinkList L,ElemType e,ElemType &next)//12.获取元素e的后继
+status NextElem(LinkList L,ElemType e,ElemType &next)
 {
-    if(L==NULL)return INFEASIBLE; // 如果链表不存在，返回错误
-    LinkList p = L->next; // 从第一个结点开始
+    if(L==NULL)return INFEASIBLE;
+    LinkList p = L->next;
     while(p != NULL){
         if(p->data == e){
-            if(p->next == NULL) return ERROR; // 如果e是最后一个结点，没有后继，返回错误
-            next = p->next->data; // 获取后继元素值
-            return OK; // 返回成功
+            if(p->next == NULL) return ERROR;
+            next = p->next->data;
+            return OK;
         }
-        p = p->next; // 移动到下一个结点
+        p = p->next;
     }
-    return ERROR; // 没有找到元素e，报错
+    return ERROR;
 }
 
-status ListInsert(LinkList &L,int i,ElemType e)//13.在链表L的第i个位置插入元素e
+status ListInsert(LinkList &L,int i,ElemType e)
 {
-    if(L==NULL)return INFEASIBLE;//链表不存在，报错
-    if(i<1||i>ListLength(L)+1)return ERROR;//位置不合法，报错
-    LinkList p=L; // 从头结点开始
+    if(L==NULL)return INFEASIBLE;
+    if(i<1||i>ListLength(L)+1)return ERROR;
+    LinkList p=L;
     for(int j=0;j<i-1;j++){
-        p=p->next;//移动到第i-1个节点
+        p=p->next;
     }
-    LinkList newnode=(LinkList)malloc(sizeof(LNode));//新建链表节点
-    if(newnode==NULL)exit(OVERFLOW);//内存分配失败，报错
-    newnode->data=e;//设置新节点的数据域为e
-    newnode->next=p->next;//将新节点的指针域指向第i个节点
-    p->next=newnode;//将第i-1个节点的指针域指向新节点
-    return OK;//返回成功
+    LinkList newnode=(LinkList)malloc(sizeof(LNode));
+    if(newnode==NULL)exit(OVERFLOW);
+    newnode->data=e;
+    newnode->next=p->next;
+    p->next=newnode;
+    return OK;
 }
 
-status ListDelete(LinkList &L,int i,ElemType &e)//14.删除链表L的第i个元素，并用e返回其值
+status ListDelete(LinkList &L,int i,ElemType &e)
 {
-    if(L==NULL)return INFEASIBLE;//链表不存在，报错
-    if(i<1||i>ListLength(L))return ERROR;//位置不合法，报错
-    LinkList p=L; // 从头结点开始
+    if(L==NULL)return INFEASIBLE;
+    if(i<1||i>ListLength(L))return ERROR;
+    LinkList p=L;
     for(int j=0;j<i-1;j++){
-        p=p->next;//移动到第i-1个节点
+        p=p->next;
     }
-    LinkList q=p->next;//q指向第i个节点，即要删除的节点
-    e=q->data;//将要删除的节点的数据域值保存在e中
-    p->next=q->next;//将第i-1个节点的指针域指向第i+1个节点，跳过第i个节点
-    free(q);//释放第i个节点的内存空间
-    return OK;//返回成功
+    LinkList q=p->next;
+    e=q->data;
+    p->next=q->next;
+    free(q);
+    return OK;
 }
 
-status ListTraverse(LinkList L)//15.遍历输出链表L中的元素
+status ListTraverse(LinkList L)
 {
-    if(L==NULL)return INFEASIBLE;//链表不存在，报错
-    LinkList p=L->next; // 从第一个结点开始
+    if(L==NULL)return INFEASIBLE;
+    LinkList p=L->next;
     while(p != NULL){
-        visit(p->data); // 输出当前结点的数据域值
-        p = p->next; // 移动到下一个结点
+        visit(p->data);
+        p = p->next;
     }
-    return OK; // 返回成功
+    printf("\n");
+    return OK;
 }
 
-status ListReverse(LinkList &L)//16.链表翻转
+status ListReverse(LinkList &L)
 {
-    if(L==NULL)return INFEASIBLE;//链表不存在，报错
-    LinkList prev = NULL; // 前驱结点初始为NULL
-    LinkList current = L->next; // 当前结点从第一个结点开始
+    if(L==NULL)return INFEASIBLE;
+    LinkList prev = NULL;
+    LinkList current = L->next;
     while(current != NULL){
-        LinkList next = current->next; // 保存当前结点的下一个结点
-        current->next = prev; // 将当前结点的指针域指向前驱结点，实现翻转
-        prev = current; // 更新前驱结点为当前结点
-        current = next; // 移动到下一个结点
+        LinkList next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
     }
-    L->next = prev; // 将头结点的指针域指向新的第一个结点，即翻转后的链表头部
-    return OK; // 返回成功
+    L->next = prev;
+    return OK;
 }
 
-status RemoveNthFromEnd(LinkList &L,int n)//17.删除链表的倒数第n个节点
+status RemoveNthFromEnd(LinkList &L,int n)
 {
     if(L==NULL)return INFEASIBLE;
     int len=ListLength(L);
     if(n<1||n>len)return ERROR;
     
     LinkList fast=L,low=L;
-    // 快指针先移动n步
     for(int i=0;i<n;i++){
         fast=fast->next;
     }
-    // 快慢指针一起移动，直到快指针到达最后一个结点
     while(fast->next!=NULL){
         fast=fast->next;
         low=low->next;
@@ -724,90 +769,75 @@ status RemoveNthFromEnd(LinkList &L,int n)//17.删除链表的倒数第n个节�
     return OK;
 }
 
-status SortList(LinkList &L)//18.排序链表
-{
-    if(L==NULL)return INFEASIBLE;
-    if(L->next==NULL||L->next->next==NULL)return OK; // 空表或只有一个结点
-    
-    LinkList sortedTail=L->next; // 已排序部分的尾结点
-    LinkList unsortedHead=sortedTail->next; // 未排序部分的头结点
-    
-    while(unsortedHead!=NULL){
-        LinkList current=unsortedHead;
-        unsortedHead=unsortedHead->next; // 先保存下一个未排序结点
-        
-        // 在已排序部分找到插入位置
-        LinkList prev=L;
-        while(prev->next!=sortedTail->next&&prev->next->data<current->data){
-            prev=prev->next;
+status SortList(LinkList &L) {
+    if (L == NULL || L->next == NULL || L->next->next == NULL)
+        return OK;  // 空表或只有一个节点，无需排序
+
+    LinkList sorted = L->next;      // 初始：第一个节点为已排序部分
+    LinkList unsorted = sorted->next; // 第二个节点开始为未排序部分
+    sorted->next = NULL;            // 断开，形成独立的已排序链
+
+    while (unsorted != NULL) {
+        LinkList cur = unsorted;    // 取出当前要插入的节点
+        unsorted = unsorted->next;  // 提前保存下一个节点
+
+        // 寻找插入位置
+        LinkList p = L;
+        while (p->next != NULL && p->next->data < cur->data) {
+            p = p->next;
         }
-        
-        // 插入结点
-        current->next=prev->next;
-        prev->next=current;
-        
-        // 如果插入到已排序部分末尾，更新尾结点
-        if(current->next==sortedTail->next){
-            sortedTail=current;
-        }
+
+        // 插入到 p 后面
+        cur->next = p->next;
+        p->next = cur;
     }
     return OK;
 }
 
-void SaveList(LinkList L,char name[])//19.保存链表到文件中
+void SaveList(LinkList L,char name[])
 {
-    if(!L) // 如果L不存在或未初始化，无法进行操作
+    if(!L)
     {
         RED;
         printf("线性表不存在\n");
         return;
     }
-    FILE *fp = fopen(name,"w"); // 打开文件，以写的方式
-    if(fp == NULL) // 如果无法找到文件，报错
+    FILE *fp = fopen(name,"w");
+    if(fp == NULL)
     {
         RED;
         printf("打开文件失败\n");
         return;
     }
-    LinkList current = L->next; // 指向第一个节点
-    while (current != NULL) // 循环遍历线性表中的每个节点
+    LinkList current = L->next;
+    while (current != NULL)
     {
-        fprintf(fp, "%d  ", current->data); // 将节点的数据写入文件中
+        fprintf(fp, "%d  ", current->data);
         current = current->next;
     }
-    fclose(fp); // 关闭文件
+    fclose(fp);
     WHITE;
-    printf("成功保存到文件%s\n",name); // 提示信息，表明操作成功
+    printf("成功保存到文件%s\n",name);
     return;
 }
 
 status ReadListFromFile(LinkList &L, char name[])
 {
-    // 1. 检查链表是否存在
     if(L == NULL){
         RED;
         printf("线性表不存在，请先创建链表！\n");
         return INFEASIBLE;
     }
-
-    // 2. 清空链表原有数据（避免内存泄漏）
     ClearList(L);
-
-    // 3. 打开文件
     FILE *fp = fopen(name, "r");
     if(fp == NULL){
         RED;
         printf("打开文件【%s】失败！请检查文件名是否正确。\n", name);
         return ERROR;
     }
-
-    // 4. 读取文件数据并插入链表
     ElemType data;
-    LinkList tail = L;  // 尾指针，用于尾插法（保持文件中数据的顺序）
-
-    // 循环读取文件中的整数，直到文件结束
+    LinkList tail = L;
     while(fscanf(fp, "%d", &data) == 1){
-        // 分配新节点
         LinkList newNode = (LinkList)malloc(sizeof(LNode));
         if(newNode == NULL){
             fclose(fp);
@@ -815,15 +845,111 @@ status ReadListFromFile(LinkList &L, char name[])
             printf("内存分配失败！\n");
             return OVERFLOW;
         }
-
-        // 尾插法插入节点
         newNode->data = data;
         newNode->next = NULL;
         tail->next = newNode;
         tail = newNode;
     }
-
-    // 5. 关闭文件并返回成功
     fclose(fp);
+    return OK;
+}
+
+// ===================== 5个新函数 =====================
+
+// 1. 生成10个随机数字链表
+status CreateRandomList10(LinkList &L){
+    ClearList(L);
+    LinkList tail = L;
+    for(int i=0;i<10;i++){
+        LinkList node = (LinkList)malloc(sizeof(LNode));
+        node->data = rand()%100;
+        node->next = NULL;
+        tail->next = node;
+        tail = node;
+    }
+    return OK;
+}
+
+// 2. 链表去重
+status RemoveDuplicate(LinkList &L){
+    if(L == NULL || L->next == NULL) return OK;
+    LinkList p = L->next;
+    while(p && p->next){
+        if(p->data == p->next->data){
+            LinkList q = p->next;
+            p->next = q->next;
+            free(q);
+        }else p = p->next;
+    }
+    return OK;
+}
+
+// 3. 最大连续子串和（Kadane算法）
+int MaxSubArray(LinkList L){
+    if(L == NULL || L->next == NULL) return 0;
+    int max = L->next->data;
+    int cur = L->next->data;
+    LinkList p = L->next->next;
+    while(p){
+        cur = cur+p->data > p->data ? cur+p->data : p->data;
+        if(cur>max) max=cur;
+        p = p->next;
+    }
+    return max;
+}
+
+// 4. 求所有链表交集
+status IntersectionAllLists(LISTS &Lists){
+    if(Lists.length < 2){
+        RED;
+        printf("至少需要两个链表！\n");
+        return ERROR;
+    }
+    int arr[1005] = {0};
+    LinkList p = Lists.elem[0].L->next;
+    while(p){
+        arr[p->data] = 1;
+        p = p->next;
+    }
+    for(int i=1;i<Lists.length;i++){
+        int tmp[1005] = {0};
+        LinkList q = Lists.elem[i].L->next;
+        while(q){
+            if(arr[q->data]) tmp[q->data] = 1;
+            q = q->next;
+        }
+        for(int j=0;j<1005;j++) arr[j] = tmp[j];
+    }
+    char newName[30] = "交集结果";
+    InitList(Lists,newName);
+    LinkList tail = Lists.elem[Lists.length-1].L;
+    for(int i=0;i<1005;i++){
+        if(arr[i]){
+            LinkList node = (LinkList)malloc(sizeof(LNode));
+            node->data = i;
+            node->next = NULL;
+            tail->next = node;
+            tail = node;
+        }
+    }
+    WHITE;
+    printf("交集已生成到新表：交集结果\n");
+    return OK;
+}
+
+// 5. 合并两个链表并排序
+status MergeTwoListSort(LinkList L1, LinkList L2, LinkList &L3){
+    ClearList(L3);
+    LinkList a = L1->next, b = L2->next, t = L3;
+    while(a && b){
+        if(a->data <= b->data){
+            t->next = a; a = a->next;
+        }else{
+            t->next = b; b = b->next;
+        }
+        t = t->next;
+    }
+    while(a) {t->next=a; a=a->next; t=t->next;}
+    while(b) {t->next=b; b=b->next; t=t->next;}
     return OK;
 }

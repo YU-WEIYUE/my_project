@@ -94,6 +94,7 @@ status ReadListFromFile(SqList &L, char FileName[]); //从文件中读取数据�
 
 /*---------主函数---------*/
 int main(){
+    
     srand((unsigned)time(NULL));//设置随机数种子为当前时间，保证每次运行程序时生成的随机数序列不同
     int choice=1;//记录用户选择
     
@@ -275,7 +276,9 @@ int main(){
                 YELLOW;
                 scanf("%d",&e);
                 ElemType next;
-                if(NextElem(Lists.elem[currentIndex].L,e,next)==OK){WHITE;printf("线性表【%s】中元素%d的后继是：%d\n", Lists.elem[currentIndex].name, e, next);}
+                if(NextElem(Lists.elem[currentIndex].L,e,next)==OK){
+                    WHITE;
+                    printf("线性表【%s】中元素%d的后继是：%d\n", Lists.elem[currentIndex].name, e, next);}
                 else if(NextElem(Lists.elem[currentIndex].L,e,next)==ERROR){RED;printf("线性表【%s】中元素%d没有后继！\n", Lists.elem[currentIndex].name, e);}
                 else{RED;printf("线性表不存在，无法获取后继！\n");}
                 break;
@@ -536,7 +539,7 @@ void show(){
     printf("1. 查看当前线性表集合列表\n");
     printf("2. 创建新线性表\n");
     printf("3. 查找并选中线性表\n");
-    printf("4. 删除线性表\n");
+    printf("4. 删除某一个线性表\n");
 
     // 分区2：单线性表基础操作
     BLUE;
