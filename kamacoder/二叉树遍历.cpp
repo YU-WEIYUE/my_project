@@ -63,7 +63,6 @@ vector<int>postorderTraversal(TreeNode* root){
     return res;
 }
 
-
 //迭代中序遍历
 vector<int>inorderTraversal(TreeNode* root){
     vector<int>res;
@@ -90,7 +89,7 @@ vector<int>inorderTraversal2(TreeNode* root){
     stack<TreeNode*>st;
     if(root)st.push(root);
     while(!st.empty()){
-        TreeNode* node =st.top();
+        TreeNode* node=st.top();
         if(node){
             st.pop();
             if(node->right)st.push(node->right);
@@ -105,8 +104,22 @@ vector<int>inorderTraversal2(TreeNode* root){
             res.push_back(node->val);
         }
     }
-    return res;    
+    return res;
 }
+
+
+
+
+
+//层序遍历
+
+
+
+
+
+
+
+
 
 
 
