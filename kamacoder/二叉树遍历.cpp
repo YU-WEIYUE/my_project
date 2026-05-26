@@ -8,8 +8,6 @@ typedef struct TreeNode{
 };
 
 
-
-
 //递归前序遍历
 void preorder(TreeNode* root,vector<int>&res){
     if(!root)return;
@@ -26,9 +24,6 @@ void inorder(TreeNode* root,vector<int>&res){
     inorder(root->right,res);
 
 }
-
-
-
 
 //迭代前序遍历
 vector<int> preorderTraversal(TreeNode* root,vector<int>&res){
@@ -108,20 +103,113 @@ vector<int>inorderTraversal2(TreeNode* root){
 }
 
 
-
-
-
 //层序遍历
+vector<vector<int>> levelOrder(TreeNode* root){
+    vector<vector<int>>result;
+    queue<TreeNode*>que;
+    if(!root)que.push(root);
+    while(!que.empty()){
+        int size=que.size();
+        vector<int>vec;
+        for(int i=0;i<size;i++){
+            TreeNode*node =que.front();
+            que.pop();
+            vec.push_back(node->val);
+            if(node->left)que.push(node->left);
+            if(node->right)que.push(node->right);
+        }
+        result.push_back(vec);
+    }
+
+}
+
+
+//右视图
+ vector<int> rightSideView(TreeNode* root){
+    vector<int>res;
+    queue<TreeNode*>que;
+    if(root){
+        que.push(root);
+    }
+    while(!que.empty()){
+        int size=que.size();
+        for(int i=0;i<size;i++){
+            TreeNode* node=que.front();
+            que.pop();
+            if(i==size-1)res.push_back(node->val);
+            if(node->left)que.push(node->left);
+            if(node->right)que.push(node->right);
+        }
+    }
+    return res;
+ }
+
+//二叉树的层平均值
+vector<double> averageOfLevels(TreeNode* root){
+    queue<TreeNode*>que;
+    vector<double>res;
+    if(root)que.push(root);
+    while(!que.empty()){
+        int size=que.size();
+        int total=0;
+        for(int i=0;i<size;i++){
+            TreeNode* node=que.front();
+            que.pop();
+            if(node->left)que.push(node->left);
+            if(node->right)que.push(node->right);
+            total+=node->val;
+        }
+        res.push_back((double)total/size);
+    }
+    return res;
+}
+
+//二叉树的最大深度
+int maxDepth(TreeNode* root) {
+    if(!root)return 0;
+    queue<TreeNode*>que;
+    que.push(root);
+    int res=0;
+    while(!que.empty()){
+        int size=que.size();
+        for(int i=0;i<size;i++){
+            TreeNode* node=que.front();
+            que.pop();
+            if(node->left)que.push(node->left);
+            if(node->right)que.push(node->right);
+        }
+        res++;
+    }
+    return res;
+}
+
+//二叉树的最小深度
+ int minDepth(TreeNode* root) {
+    if(!root)return 0;
+    queue<TreeNode*>que;
+    que.push(root);
+    int res=0;
+    while(!que.empty()){
+        int size=que.size();
+        res++;
+        for(int i=0;i<size;i++){
+            TreeNode* node=que.front();
+            que.pop();
+            if(!node->left&&!node->right)return res;
+            if(node->left)que.push(node->left);
+            if(node->right)que.push(node->right);
+        }
+
+    }
+    return res;
+ }
 
 
 
-
-
-
-
-
-
-
-
+ 
+int main(){
+    cout<<"hello";
+    return 0;
+}
 
 
