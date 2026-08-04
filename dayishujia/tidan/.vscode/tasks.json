@@ -8,13 +8,13 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=c++11",
+                "-Wall",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-finput-charset=UTF-8",    // 告诉编译器你的源代码是UTF-8编码
-                "-fexec-charset=GBK",       // 编译生成的exe使用GBK编码，匹配Windows控制台
-                "-static-libgcc",           // 静态链接库，避免运行时缺少dll
-                "-static-libstdc++"         // 静态链接C++标准库
+                "${fileDirname}\\test.exe",
+                "-finput-charset=UTF-8",
+                "-fexec-charset=GBK",
+                "-mconsole"
             ],
             "options": {
                 "cwd": "${fileDirname}"

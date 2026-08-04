@@ -7,9 +7,11 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-std=c++11",
                 "${file}",
                 "-o",
                 "${fileDirname}\\test.exe",
+                "-Wall",
                 "-finput-charset=UTF-8",
                 "-fexec-charset=GBK",
                 "-mconsole"
